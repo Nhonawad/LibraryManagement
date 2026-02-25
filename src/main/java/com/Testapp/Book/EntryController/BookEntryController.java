@@ -26,15 +26,24 @@ public class BookEntryController {
 
     @PostMapping("/books")
     public Boolean addBookDetails(@RequestBody BookDetails bookDetails){
-       libraryService.addBook(bookDetails);
-       return true;
+       if(libraryService.addBook(bookDetails)){
+           return true;
+       }
+       else{
+           System.out.println("Failed to add book details");
+           return false;
+       }
     }
 
     @PostMapping("/user")
     public Boolean addUserDetails(@RequestBody User user){
-        System.out.println("Received user details: " + user.getName() + ", " + user.getEmail());
-        libraryService.addUser(user);
-        return true;
+        if(libraryService.addUser(user)){
+            return true;
+        }
+        else{
+            System.out.println("Failed to add user details");
+            return false;
+        }
      }
 
      @GetMapping("/user")

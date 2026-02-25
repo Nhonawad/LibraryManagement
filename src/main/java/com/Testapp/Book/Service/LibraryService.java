@@ -20,14 +20,13 @@ public class LibraryService {
     private static int bookIssueIdCounter = 0;
     private static int userIdCounter = 0;
 
-    public User addUser(User user) {
-        System.out.println("Adding user: " + user.getName() + ", " + user.getEmail());
+    public Boolean addUser(User user) {
         users.put(user.getUserId(), user);
-        return user;
+        return true;
     }
-    public BookDetails addBook(BookDetails book) {
+    public Boolean addBook(BookDetails book) {
         books.put(book.getBookId(), book);
-        return book;
+        return true;
     }
 
     public List<BookDetails> getAllBooks() {
@@ -77,13 +76,21 @@ public class LibraryService {
         if (!books.containsKey(bookId)) {
             throw new IllegalArgumentException("Book not found with id: " + bookId);
         }
-        //validation to check if the return date is after 2 weeks of issue date
 
         List<BookIssue> userIssues = issuedBooks.getOrDefault(userId, new ArrayList<>());
-       /* boolean removed = userIssues.removeIf(issue -> issue.getBookId() == bookId);
+
+        BookIssue issue = userIssues.stream()
+                .filter(i -> i.getBookId() == bookId)
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Book with id " + bookId + " is not issued to user with id " + userId));
+
+        if(issue.getIssueDate() .plusWeeks(2).isAfter(LocalDate.now())) {
+            throw new IllegalStateException("Book return is overdue.Yor have to pay fine for late return");
+        }
+        Boolean removed = userIssues.removeIf(issues -> issues.getBookId() == bookId);
         if (!removed) {
             throw new IllegalStateException("Book with id " + bookId + " is not issued to user with id " + userId);
-        } */
+        }
         issuedBooks.put(userId, userIssues);
     }
     
